@@ -39,7 +39,7 @@ def parse_page_index(html):
 # 获取详情页面的html代码
 def get_page_detail(url):
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=3)
         if response.status_code == 200:
             return response.text
         return None
@@ -48,9 +48,10 @@ def get_page_detail(url):
         return None
 
 
-# 解析详情页面并提取product_name, brand, price,
+# 解析详情页面并提取product_name, brand, price, product_id
 def parse_page_detail(html, url, price=None):
     soup = BeautifulSoup(html, 'lxml')
+    # 爬取过程中有商品brand为空，所以加了try
     try:
         brand = soup.select('#parameter-brand a')[0].text
     except:
@@ -70,7 +71,7 @@ def parse_page_detail(html, url, price=None):
     return product
 
 
-# 解析问答页
+# 解析问答页, 提取问题和问题id号
 def get_questions(id):
     dialogs = []
     page = 1
@@ -81,8 +82,9 @@ def get_questions(id):
             data = json.loads(html)  # 将json转换为字典格式
             if data and data['questionList']:
                 for item in data.get('questionList'):
+                    question_id = item['id']
                     question = item['content']
-                    answerList = [i['content'] for i in item['answerList']]
+                    answerList = get_answers(question_id)
                     dialog = {
                         'question': question,
                         'answerList': answerList
@@ -94,6 +96,26 @@ def get_questions(id):
         except Exception:
             pass
     return dialogs
+
+
+# 解析回答页，提取所有的答案
+def get_answers(id):
+    answers = []
+    page = 1
+    while True:
+        url = 'https://question.jd.com/question/getAnswerListById.action?page={0}&questionId={1}'.format(page, id)
+        html = get_page_detail(url)
+        try:
+            data = json.loads(html)  # 将json转换为字典格式
+            if data and data['answers']:
+                answer_list = [answer['content'] for answer in data['answers']]
+                answers.extend(answer_list)
+                page += 1
+            else:
+                break
+        except JSONDecodeError:
+            pass
+    return answers
 
 
 # 把详情页面的url和标题（title)以及组图的地址list保存到mongo中
@@ -117,7 +139,7 @@ def main(page):
 if __name__ == '__main__':
     # main(1)
     pages = [2 * i + 1 for i in range(100)]
-    pool = Pool(processes=2)  # 设置进程池中的进程数
+    pool = Pool(processes=3)  # 设置进程池中的进程数
     pool.map(main, pages)  # 将列表中的每个对象应用到get_page_list函数
     pool.close()  # 等待进程池中的进程执行结束后再关闭pool
     pool.join()

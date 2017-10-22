@@ -6,11 +6,11 @@ MONGO_DB = 'jingdong'
 
 
 
-# # 面膜
-# MONGO_TABLE = 'facemask2'
-# base_url = 'https://search.jd.com/Search?keyword=%E6%B4%97%E9%9D%A2%E5%A5%B6&enc=utf-8&qrst=1&rt=1&stop=1&vt=2&wq=%E6%B4%97%E9%9D%A2%E5%A5%B6&'
-
-
-# 洗面奶
+# 面膜
+MONGO_TABLE = 'facemask'
 base_url = 'https://search.jd.com/Search?keyword=%E6%B4%97%E9%9D%A2%E5%A5%B6&enc=utf-8&qrst=1&rt=1&stop=1&vt=2&wq=%E6%B4%97%E9%9D%A2%E5%A5%B6&'
-MONGO_TABLE = 'clean_milk'
+
+
+# # 洗面奶
+# base_url = 'https://search.jd.com/Search?keyword=%E6%B4%97%E9%9D%A2%E5%A5%B6&enc=utf-8&qrst=1&rt=1&stop=1&vt=2&wq=%E6%B4%97%E9%9D%A2%E5%A5%B6&'
+# MONGO_TABLE = 'clean_milk'
