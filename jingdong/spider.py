@@ -7,7 +7,7 @@ import requests
 from bs4 import BeautifulSoup
 from requests import RequestException
 from json.decoder import JSONDecodeError
-from config import *
+from jingdong.config import *
 
 client = pymongo.MongoClient(MONGO_URL, connect=False)
 db = client[MONGO_DB]
@@ -17,6 +17,15 @@ db = client[MONGO_DB]
 def get_page_index(page):
     # 向路由中出入参数
     url = base_url + 'page={}'.format(page)
+    # 传参不如构建路由简便
+    # payload = {'keyword': keyword,
+    #            'enc': 'utf-8',
+    #            'qrst': '1',
+    #            'rt': '1',
+    #            'stop': '1',
+    #            'vt': '2',
+    #            'suggest': '1.his.0.0',
+    #            'page': page}
     try:
         response = requests.get(url)
         if response.status_code == 200:
