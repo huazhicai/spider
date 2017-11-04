@@ -62,8 +62,8 @@ def parser_comment(html):
     html_doc = html.encode('ISO-8859-1')
     soup = BeautifulSoup(html_doc, 'lxml')
     newcode_pattern = re.compile(r"var .*?ewcode = .*?(\d+).*?;", re.S)
-    city_pattern = re.compile(r"var .*?city = '(.*?)';", re.S)
-    # print(soup.text)
+    city_pattern = re.compile(r"var .*?city = .*?(\w+).*?;", re.S)
+    print(soup.text)
     city = city_pattern.search(soup.text, re.S).group(1)
     newcode = newcode_pattern.search(soup.text).group(1)
     return city, newcode
@@ -91,7 +91,8 @@ def get_comments(item, city, newcode):
                 if data and data['list']:
                     print('[{0}] Crawl {1}'.format(city, response.url))
                     for item in data.get('list'):
-                        write_to_file(city, item.get('content').strip())
+                        if item:
+                            write_to_file(city, item.get('content'))
                     page += 1
                 else:
                     break
@@ -110,8 +111,8 @@ def write_to_file(city, content):
 
 def main(city):
     total = int(get_total_page(city))
-    page = 1
-    while page <= total:
+    page = 10
+    while page <= 10:
         html = get_index_page(city, page)
         if html:
             for item in parser_index_page(html):
@@ -125,7 +126,8 @@ def main(city):
 
 
 if __name__ == '__main__':
-    pool = Pool()                        # 设置进程池中的进程数
-    pool.map(main, CITYS)                # 将列表中的每个对象应用到get_page_list函数
-    pool.close()                         # 等待进程池中的进程执行结束后再关闭pool
-    pool.join()
+    main('sy')
+    # pool = Pool(processes=4)                        # 设置进程池中的进程数
+    # pool.map(main, CITYS)                # 将列表中的每个对象应用到get_page_list函数
+    # pool.close()                         # 等待进程池中的进程执行结束后再关闭pool
+    # pool.join()

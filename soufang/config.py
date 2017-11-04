@@ -18,7 +18,7 @@ def get_city():
     print(set(items))
 
 
-get_city()
+# get_city()
 
 CITYS = ['yt', 'zaozhuang', 'zhongwei', 'qianxi', 'boluo', 'hegang', 'yl', 'yunfu', 'meishan', 'fq', 'yangchun',
          'linzhi', 'rudong', 'mengjin', 'feicheng', 'zhucheng', 'bengbu', 'huainan', 'dongxing', 'xinmi', 'linqu',
